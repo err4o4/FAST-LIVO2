@@ -1178,12 +1178,14 @@ void LIVMapper::publish_frame_world(const ros::Publisher &pubLaserCloudFullRes, 
   sensor_msgs::PointCloud2 laserCloudmsg;
   if (slam_mode_ == LIVO && LidarMeasures.lio_vio_flg == VIO)
   {
+    if (laserCloudWorldRGB->empty()) return;
     pcl::toROSMsg(*laserCloudWorldRGB, laserCloudmsg);
   }
-  if (slam_mode_ == ONLY_LIO || slam_mode_ == ONLY_LO)
-  { 
-    pcl::toROSMsg(*pcl_w_wait_pub, laserCloudmsg); 
+  else if (slam_mode_ == ONLY_LIO || slam_mode_ == ONLY_LO)
+  {
+    pcl::toROSMsg(*pcl_w_wait_pub, laserCloudmsg);
   }
+  else return;
   laserCloudmsg.header.stamp = ros::Time::now(); //.fromSec(last_timestamp_lidar);
   laserCloudmsg.header.frame_id = "camera_init";
   pubLaserCloudFullRes.publish(laserCloudmsg);
